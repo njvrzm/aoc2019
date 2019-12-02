@@ -41,7 +41,7 @@ func TestFuelForMassAndFuel(t *testing.T) {
 
 func TestTotalFuelForMassForInput(t *testing.T) {
 	masses := util.NumbersFromFile("testdata/input.txt")
-	total := TotalFuelRequired(masses, FuelForMass)
+	total := FuelForMass.Sum(masses)
 	expected := 3452245
 	if total != expected {
 		t.Errorf("Total fuel required should be %d", expected)
@@ -49,9 +49,19 @@ func TestTotalFuelForMassForInput(t *testing.T) {
 }
 func TestTotalFuelForMassesAndFuelsForInput(t *testing.T) {
 	masses := util.NumbersFromFile("testdata/input.txt")
-	total := TotalFuelRequired(masses, FuelForMassAndFuel)
+	total := FuelForMassAndFuel.Sum(masses)
 	expected := 5175499
 	if total != expected {
 		t.Errorf("Total fuel required should be %d, got %d", expected, total)
+	}
+}
+
+func BenchmarkTotalFuelForMassesAndFuelsForInput(b *testing.B) {
+	masses := util.NumbersFromFile("testdata/input.txt")
+	for i := 0; i < b.N; i++ {
+		if FuelForMassAndFuel.Sum(masses) != 5175499 {
+			panic("Oh noes")
+		}
+
 	}
 }
