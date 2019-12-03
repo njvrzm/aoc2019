@@ -3,7 +3,7 @@ package two
 import (
 	"testing"
 
-	util "github.com/njvrzm/aoc/util"
+	"github.com/njvrzm/aoc/util"
 )
 
 func TestIntcode(t *testing.T) {
@@ -51,4 +51,30 @@ func TestFindIntcodeSolution(t *testing.T) {
 
 	}
 
+}
+func BenchmarkFindIntcodeSolution(b *testing.B) {
+	var program Program = util.NumbersFromFile("testdata/two")
+	altered := make(Program, len(program))
+	target := 19690720
+	expectedI := 52
+	expectedJ := 96
+	for run := 0; run < b.N; run++ {
+		i, j := func() (int, int) {
+			for i := 0; i < 100; i++ {
+				for j := 0; j < 100; j++ {
+					copy(altered, program)
+					altered[1] = i
+					altered[2] = j
+					RunIntcode(altered)
+					if altered[0] == target {
+						return i, j
+					}
+				}
+			}
+			return -1, -1
+		}()
+		if i != expectedI || j != expectedJ {
+			b.Errorf("Expected values %d, %d; got %d, %d", expectedI, expectedJ, i, j)
+		}
+	}
 }
